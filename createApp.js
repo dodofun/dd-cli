@@ -90,16 +90,6 @@ const program = new commander.Command(packageJson.name)
       )}`
     );
     console.log(
-      `      - a .tgz archive: ${chalk.green(
-        'https://mysite.com/my-react-scripts-0.8.2.tgz'
-      )}`
-    );
-    console.log(
-      `      - a .tar.gz archive: ${chalk.green(
-        'https://mysite.com/my-react-scripts-0.8.2.tar.gz'
-      )}`
-    );
-    console.log(
       `    It is not needed unless you specifically want to use a fork.`
     );
     console.log();
@@ -114,24 +104,9 @@ const program = new commander.Command(packageJson.name)
         'file:../my-custom-template'
       )}`
     );
-    console.log(
-      `      - a .tgz archive: ${chalk.green(
-        'https://mysite.com/my-custom-template-0.8.2.tgz'
-      )}`
-    );
-    console.log(
-      `      - a .tar.gz archive: ${chalk.green(
-        'https://mysite.com/my-custom-template-0.8.2.tar.gz'
-      )}`
-    );
     console.log();
     console.log(
       `    If you have any problems, do not hesitate to file an issue:`
-    );
-    console.log(
-      `      ${chalk.cyan(
-        'https://github.com/facebook/create-react-app/issues/new'
-      )}`
     );
     console.log();
   })
@@ -149,12 +124,12 @@ if (program.info) {
         System: ['OS', 'CPU'],
         Binaries: ['Node', 'npm', 'Yarn'],
         Browsers: ['Chrome', 'Edge', 'Internet Explorer', 'Firefox', 'Safari'],
-        npmPackages: ['react', 'react-dom', 'react-scripts'],
-        npmGlobalPackages: ['create-react-app'],
+        // npmPackages: ['react', 'react-dom', 'react-scripts'],
+        // npmGlobalPackages: ['create-dd-app'],
       },
       {
         duplicates: true,
-        showNotFound: true,
+        showNotFound: false,
       }
     )
     .then(console.log);
@@ -167,7 +142,7 @@ if (typeof projectName === 'undefined') {
   );
   console.log();
   console.log('For example:');
-  console.log(`  ${chalk.cyan(program.name())} ${chalk.green('my-react-app')}`);
+  console.log(`  ${chalk.cyan(program.name())} ${chalk.green('my-dd-app')}`);
   console.log();
   console.log(
     `Run ${chalk.cyan(`${program.name()} --help`)} to see all options.`
@@ -184,7 +159,7 @@ if (typeof projectName === 'undefined') {
 checkForLatestVersion()
   .catch(() => {
     try {
-      return execSync('npm view create-react-app version').toString().trim();
+      return execSync('npm view create-dd-app version').toString().trim();
     } catch (e) {
       return null;
     }
@@ -194,7 +169,7 @@ checkForLatestVersion()
       console.log();
       console.error(
         chalk.yellow(
-          `You are running \`create-react-app\` ${packageJson.version}, which is behind the latest release (${latest}).\n\n` +
+          `You are running \`create-dd-app\` ${packageJson.version}, which is behind the latest release (${latest}).\n\n` +
             'We no longer support global installation of Create React App.'
         )
       );
@@ -203,11 +178,6 @@ checkForLatestVersion()
         'Please remove any global installs with one of the following commands:\n' +
           '- npm uninstall -g create-react-app\n' +
           '- yarn global remove create-react-app'
-      );
-      console.log();
-      console.log(
-        'The latest instructions for creating a new app can be found here:\n' +
-          'https://create-react-app.dev/docs/getting-started/'
       );
       console.log();
       process.exit(1);
@@ -232,8 +202,6 @@ function createApp(name, verbose, version, template, useNpm, usePnp) {
           `Please update to Node 10 or higher for a better, fully supported experience.\n`
       )
     );
-    // Fall back to latest supported react-scripts on Node 4
-    version = 'react-scripts@0.9.x';
   }
 
   const root = path.resolve(name);
@@ -246,7 +214,7 @@ function createApp(name, verbose, version, template, useNpm, usePnp) {
   }
   console.log();
 
-  console.log(`Creating a new React app in ${chalk.green(root)}.`);
+  console.log(`Creating a new dd app in ${chalk.green(root)}.`);
   console.log();
 
   const packageJson = {
@@ -277,8 +245,6 @@ function createApp(name, verbose, version, template, useNpm, usePnp) {
           )
         );
       }
-      // Fall back to latest supported react-scripts for npm 3
-      version = 'react-scripts@0.9.x';
     }
   } else if (usePnp) {
     const yarnInfo = checkYarnVersion();
@@ -419,7 +385,7 @@ function run(
     getInstallPackage(version, originalDirectory),
     getTemplateInstallPackage(template, originalDirectory),
   ]).then(([packageToInstall, templateToInstall]) => {
-    const allDependencies = ['react', 'react-dom', packageToInstall];
+    const allDependencies = [packageToInstall];
 
     console.log('Installing packages. This might take a couple of minutes.');
 
@@ -461,13 +427,6 @@ function run(
           console.log('');
         }
 
-        console.log(
-          `Installing ${chalk.cyan('react')}, ${chalk.cyan(
-            'react-dom'
-          )}, and ${chalk.cyan(packageInfo.name)}${
-            supportsTemplates ? ` with ${chalk.cyan(templateInfo.name)}` : ''
-          }...`
-        );
         console.log();
 
         return install(
@@ -856,7 +815,7 @@ function checkAppName(appName) {
   }
 
   // TODO: there should be a single place that holds the dependencies
-  const dependencies = ['react', 'react-dom', 'react-scripts'].sort();
+  const dependencies = [].sort();
   if (dependencies.includes(appName)) {
     console.error(
       chalk.red(
@@ -1115,6 +1074,7 @@ function checkForLatestVersion() {
   return new Promise((resolve, reject) => {
     https
       .get(
+        // TODO 更新为自己的 npm 包资源地址
         'https://registry.npmjs.org/-/package/create-react-app/dist-tags',
         res => {
           if (res.statusCode === 200) {
